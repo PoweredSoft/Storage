@@ -36,8 +36,8 @@ steps:
     includesource: true
     versioningScheme: 'byEnvVar'
     versionEnvVar: 'GitVersion.NuGetVersion'
-    
-- task: DotNetCoreCLI@2
+
+- task: NuGetCommand@2
   inputs:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
