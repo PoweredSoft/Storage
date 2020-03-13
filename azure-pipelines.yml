@@ -34,3 +34,6 @@ steps:
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
     versioningScheme: 'byEnvVar'
     versionEnvVar: 'GitVersion.NuGetVersion'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'PoweredSoftNuget'
+    
