@@ -1,4 +1,5 @@
-﻿using Amazon.S3;
+﻿using Amazon.Runtime;
+using Amazon.S3;
 using Amazon.S3.Model;
 using PoweredSoft.Storage.Core;
 using System;
@@ -17,6 +18,9 @@ namespace PoweredSoft.Storage.S3
         protected readonly string accessKey;
         protected readonly string secret;
 
+        protected S3UsEast1RegionalEndpointValue? s3UsEast1RegionalEndpointValue;
+        protected bool forcePathStyle = false;
+
         public S3StorageProvider(string endpoint, string bucketName, string accessKey, string secret)
         {
             this.endpoint = endpoint;
@@ -25,11 +29,23 @@ namespace PoweredSoft.Storage.S3
             this.secret = secret;
         }
 
+        public void SetForcePathStyle(bool forcePathStyle)
+        {
+            this.forcePathStyle = forcePathStyle;
+        }
+
+        public void SetS3UsEast1RegionalEndpointValue(S3UsEast1RegionalEndpointValue value)
+        {
+            this.s3UsEast1RegionalEndpointValue = value;
+        }
+
         protected virtual IAmazonS3 GetClient()
         {
             var config = new AmazonS3Config
             {
-                ServiceURL = endpoint
+                USEast1RegionalEndpointValue = s3UsEast1RegionalEndpointValue,
+                ServiceURL = endpoint,
+                ForcePathStyle = forcePathStyle
             };
             var client = new AmazonS3Client(this.accessKey, this.secret, config);
             return client;
