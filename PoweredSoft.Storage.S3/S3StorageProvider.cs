@@ -12,10 +12,10 @@ namespace PoweredSoft.Storage.S3
 {
     public class S3StorageProvider : IStorageProvider
     {
-        private readonly string endpoint;
-        private readonly string bucketName;
-        private readonly string accessKey;
-        private readonly string secret;
+        protected readonly string endpoint;
+        protected readonly string bucketName;
+        protected readonly string accessKey;
+        protected readonly string secret;
 
         public S3StorageProvider(string endpoint, string bucketName, string accessKey, string secret)
         {
@@ -25,11 +25,11 @@ namespace PoweredSoft.Storage.S3
             this.secret = secret;
         }
 
-        private IAmazonS3 GetClient()
+        protected virtual IAmazonS3 GetClient()
         {
             var config = new AmazonS3Config
             {
-                ServiceURL = $"https://{endpoint}"
+                ServiceURL = endpoint
             };
             var client = new AmazonS3Client(this.accessKey, this.secret, config);
             return client;
