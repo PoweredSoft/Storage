@@ -18,7 +18,7 @@ namespace PoweredSoft.Storage.S3
         protected readonly string accessKey;
         protected readonly string secret;
 
-        protected S3UsEast1RegionalEndpointValue? s3UsEast1RegionalEndpointValue;
+        protected S3UsEast1RegionalEndpointValue? s3UsEast1RegionalEndpointValue = null;
         protected bool forcePathStyle = false;
 
         public S3StorageProvider(string endpoint, string bucketName, string accessKey, string secret)
