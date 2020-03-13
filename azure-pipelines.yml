@@ -30,10 +30,16 @@ steps:
 
 - task: DotNetCoreCLI@2
   inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    includesymbols: true
+    includesource: true
     versioningScheme: 'byEnvVar'
     versionEnvVar: 'GitVersion.NuGetVersion'
+    
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
     nuGetFeedType: 'external'
     publishFeedCredentials: 'PoweredSoftNuget'
-    
