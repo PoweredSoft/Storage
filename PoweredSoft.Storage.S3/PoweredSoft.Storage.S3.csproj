@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <Copyright>Powered Softwares Inc.</Copyright>
+    <Version>1.1.0$(VersionSuffix)</Version>
+    <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;amp;r=g&amp;amp;d=retro</PackageIconUrl>
+    <Product>PoweredSoft.Storage.S3</Product>
+    <Description>initial</Description>
+    <PackageId>PoweredSoft.Storage.S3</PackageId>
+    <PackageReleaseNotes>initial</PackageReleaseNotes>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <Company>PoweredSoft</Company>
+    <Authors>PoweredSoft</Authors>
+    <Deterministic>False</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PoweredSoft.Storage.Core\PoweredSoft.Storage.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.3.110.10" />
+    
+  </ItemGroup>
+
+</Project>
