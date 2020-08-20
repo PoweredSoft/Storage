@@ -16,6 +16,13 @@ namespace PoweredSoft.Storage.Test
         }
 
         [TestMethod]
+        public void CanContainDash()
+        {
+            var space = GetMockS3Space();
+            Assert.IsTrue(space.IsFileNameAllowed("Operations-yay.pdf"), "Should be allowed");
+        }
+
+        [TestMethod]
         public void NameSanitation()
         {
             var space = GetMockS3Space();

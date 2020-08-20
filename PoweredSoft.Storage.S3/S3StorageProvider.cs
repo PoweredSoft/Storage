@@ -227,7 +227,7 @@ namespace PoweredSoft.Storage.S3
 
         public string SanitizeFileName(string key, string replacement)
         {
-            string pattern = @"[^a-zA-Z0-9.!/-_*'()]";
+            string pattern = @"[^a-zA-Z0-9.!\-_*'()]";
             string substitution = replacement;
             string input = key;
             RegexOptions options = RegexOptions.Multiline;
@@ -240,7 +240,7 @@ namespace PoweredSoft.Storage.S3
 
         public bool IsFileNameAllowed(string fileName)
         {
-            string pattern = @"[^a-zA-Z0-9.!/-_*'()]";
+            string pattern = @"[^a-zA-Z0-9.!\-_*'()]";
             RegexOptions options = RegexOptions.Multiline;
             Regex regex = new Regex(pattern, options);
             var hasMatches = regex.IsMatch(fileName);
