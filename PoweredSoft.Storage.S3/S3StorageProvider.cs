@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PoweredSoft.Storage.S3
@@ -222,6 +223,28 @@ namespace PoweredSoft.Storage.S3
 
             var ret = new S3FileInfo(s3o);
             return ret;
+        }
+
+        public string SanitizeFileName(string key, string replacement)
+        {
+            string pattern = @"[^a-zA-Z0-9.!/-_*'()]";
+            string substitution = replacement;
+            string input = key;
+            RegexOptions options = RegexOptions.Multiline;
+
+            Regex regex = new Regex(pattern, options);
+
+            string result = regex.Replace(input, substitution);
+            return result;
+        }
+
+        public bool IsFileNameAllowed(string fileName)
+        {
+            string pattern = @"[^a-zA-Z0-9.!/-_*'()]";
+            RegexOptions options = RegexOptions.Multiline;
+            Regex regex = new Regex(pattern, options);
+            var hasMatches = regex.IsMatch(fileName);
+            return false == hasMatches;
         }
     }
 }

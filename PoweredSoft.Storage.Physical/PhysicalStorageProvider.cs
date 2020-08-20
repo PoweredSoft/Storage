@@ -145,5 +145,15 @@ namespace PoweredSoft.Storage.Physical
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
         }
+
+        public bool IsFileNameAllowed(string fileName)
+        {
+            return true;
+        }
+
+        public string SanitizeFileName(string key, string replacement)
+        {
+            return key;
+        }
     }
 }

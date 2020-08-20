@@ -212,5 +212,15 @@ namespace PoweredSoft.Storage.Azure.Blob
             var container = GetContainer();
             return encoding.GetString(await this.GetFileBytesAsync(path));
         }
+
+        public bool IsFileNameAllowed(string fileName)
+        {
+            return true;
+        }
+
+        public string SanitizeFileName(string key, string replacement)
+        {
+            return key;
+        }
     }
 }

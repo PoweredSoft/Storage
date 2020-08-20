@@ -20,5 +20,8 @@ namespace PoweredSoft.Storage.Core
         Task DeleteFileAsync(string path);
         Task DeleteDirectoryAsync(string path, bool force = false);
         Task<IDirectoryInfo> CreateDirectoryAsync(string path);
+
+        bool IsFileNameAllowed(string fileName);
+        string SanitizeFileName(string key, string replacement);
     }
 }
