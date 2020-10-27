@@ -45,11 +45,10 @@ namespace PoweredSoft.Storage.Test
 
         private static S3StorageProvider GetMockS3Space()
         {
-            //var space = new S3StorageProvider("http://localhost:9000", "mybucket", "minioadmin", "minioadmin");
-            //space.SetForcePathStyle(true);
-            //space.SetS3UsEast1RegionalEndpointValue(Amazon.Runtime.S3UsEast1RegionalEndpointValue.Legacy);
+            var space = new S3StorageProvider("http://localhost:9000", "mybucket", "minioadmin", "minioadmin");
+            space.SetForcePathStyle(true);
+            space.SetS3UsEast1RegionalEndpointValue(Amazon.Runtime.S3UsEast1RegionalEndpointValue.Legacy);
 
-            var space = new S3StorageProvider(" https://nyc3.digitaloceanspaces.com", "lveb-public", "42ZNGWW3EHQECLS7FCPT", "NKhVtWvAdUKRhoFN9QK7rsqnLarVaxpxIAwHJTCPrIA");
             return space;
         }
     }
