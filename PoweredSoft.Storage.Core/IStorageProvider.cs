@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace PoweredSoft.Storage.Core
 {
+
     public interface IStorageProvider
     {
         Task<List<IDirectoryOrFile>> GetListAsync(string path);
@@ -13,6 +14,9 @@ namespace PoweredSoft.Storage.Core
         Task<IFileInfo> WriteFileAsync(string sourcePath, string path, bool overrideIfExists = true);
         Task<IFileInfo> WriteFileAsync(byte[] bytes, string path, bool overrideIfExists = true);
         Task<IFileInfo> WriteFileAsync(Stream stream, string path, bool overrideIfExists = true);
+        Task<IFileInfo> WriteFileAsync(string sourcePath, string path, IWriteFileOptions options);
+        Task<IFileInfo> WriteFileAsync(byte[] bytes, string path, IWriteFileOptions options);
+        Task<IFileInfo> WriteFileAsync(Stream stream, string path, IWriteFileOptions options);
         Task<Stream> GetFileStreamAsync(string path);
         Task<byte[]> GetFileBytesAsync(string path);
         Task<string> GetFileContentAsync(string path, Encoding encoding);

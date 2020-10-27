@@ -146,40 +146,28 @@ namespace PoweredSoft.Storage.Azure.Blob
             return ret;
         }
 
-        public async Task<IFileInfo> WriteFileAsync(string sourcePath, string path, bool overrideIfExists = true)
+        public Task<IFileInfo> WriteFileAsync(string sourcePath, string path, bool overrideIfExists = true)
         {
-            if (!overrideIfExists && await FileExistsAsync(path))
-                throw new FileAlreadyExistsException(path);
-
-            var container = GetContainer();
-            var blob = container.GetBlockBlobReference(path);
-            await blob.UploadFromFileAsync(sourcePath);
-            return new AzureBlobFileInfo(blob);
+            return WriteFileAsync(sourcePath, path, new DefaultWriteOptions
+            {
+                OverrideIfExists = overrideIfExists
+            });
         }
 
-        public async Task<IFileInfo> WriteFileAsync(byte[] bytes, string path, bool overrideIfExists = true)
+        public Task<IFileInfo> WriteFileAsync(byte[] bytes, string path, bool overrideIfExists = true)
         {
-            if (!overrideIfExists && await FileExistsAsync(path))
-                throw new FileAlreadyExistsException(path);
-
-            var container = GetContainer();
-            var blob = container.GetBlockBlobReference(path);
-            await blob.UploadFromByteArrayAsync(bytes, 0, bytes.Length);
-            return new AzureBlobFileInfo(blob);
+            return WriteFileAsync(bytes, path, new DefaultWriteOptions
+            {
+                OverrideIfExists = overrideIfExists
+            });
         }
 
-        public async Task<IFileInfo> WriteFileAsync(Stream stream, string path, bool overrideIfExists = true)
+        public Task<IFileInfo> WriteFileAsync(Stream stream, string path, bool overrideIfExists = true)
         {
-            if (!overrideIfExists && await FileExistsAsync(path))
-                throw new FileAlreadyExistsException(path);
-
-            if (stream.CanSeek && stream.Position != 0)
-                stream.Seek(0, SeekOrigin.Begin);
-
-            var container = GetContainer();
-            var blob = container.GetBlockBlobReference(path);
-            await blob.UploadFromStreamAsync(stream);
-            return new AzureBlobFileInfo(blob);
+            return WriteFileAsync(stream, path, new DefaultWriteOptions
+            {
+                OverrideIfExists = overrideIfExists
+            });
         }
 
         public async Task<Stream> GetFileStreamAsync(string path)
@@ -221,6 +209,57 @@ namespace PoweredSoft.Storage.Azure.Blob
         public string SanitizeFileName(string key, string replacement)
         {
             return key;
+        }
+
+        public async Task<IFileInfo> WriteFileAsync(string sourcePath, string path, IWriteFileOptions options)
+        {
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            if (!options.OverrideIfExists && await FileExistsAsync(path))
+                throw new FileAlreadyExistsException(path);
+
+            var container = GetContainer();
+            var blob = container.GetBlockBlobReference(path);
+            await blob.UploadFromFileAsync(sourcePath);
+            return new AzureBlobFileInfo(blob);
+        }
+
+        public async Task<IFileInfo> WriteFileAsync(byte[] bytes, string path, IWriteFileOptions options)
+        {
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            if (!options.OverrideIfExists && await FileExistsAsync(path))
+                throw new FileAlreadyExistsException(path);
+
+            var container = GetContainer();
+            var blob = container.GetBlockBlobReference(path);
+            await blob.UploadFromByteArrayAsync(bytes, 0, bytes.Length);
+            return new AzureBlobFileInfo(blob);
+        }
+
+        public async Task<IFileInfo> WriteFileAsync(Stream stream, string path, IWriteFileOptions options)
+        {
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            if (!options.OverrideIfExists && await FileExistsAsync(path))
+                throw new FileAlreadyExistsException(path);
+         
+            if (stream.CanSeek && stream.Position != 0)
+                stream.Seek(0, SeekOrigin.Begin);
+
+            var container = GetContainer();
+            var blob = container.GetBlockBlobReference(path);
+            await blob.UploadFromStreamAsync(stream);
+            return new AzureBlobFileInfo(blob);
         }
     }
 }

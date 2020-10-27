@@ -92,22 +92,33 @@ namespace PoweredSoft.Storage.Physical
             return result;
         }
 
-        public async Task<IFileInfo> WriteFileAsync(string sourcePath, string path, bool overrideIfExists = true)
+        public async Task<IFileInfo> WriteFileAsync(string sourcePath, string path, IWriteFileOptions options)
         {
-            if (!overrideIfExists && await FileExistsAsync(path))
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            if (!options.OverrideIfExists && await FileExistsAsync(path))
                 throw new FileAlreadyExistsException(path);
+        
 
             CreateDirectoryIfNotExisting(path);
 
-            System.IO.File.Copy(sourcePath, path, overrideIfExists);
+            System.IO.File.Copy(sourcePath, path, options.OverrideIfExists);
             var fileInfo = new FileInfo(path);
             var ret = new PhysicalFileInfo(fileInfo);
             return ret;
         }
 
-        public async Task<IFileInfo> WriteFileAsync(byte[] bytes, string path, bool overrideIfExists = true)
+        public async Task<IFileInfo> WriteFileAsync(byte[] bytes, string path, IWriteFileOptions options)
         {
-            if (!overrideIfExists && await FileExistsAsync(path))
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            if (!options.OverrideIfExists && await FileExistsAsync(path))
                 throw new FileAlreadyExistsException(path);
 
             CreateDirectoryIfNotExisting(path);
@@ -118,9 +129,14 @@ namespace PoweredSoft.Storage.Physical
             return physicalinfo;
         }
 
-        public async Task<IFileInfo> WriteFileAsync(Stream stream, string path, bool overrideIfExists = true)
+        public async Task<IFileInfo> WriteFileAsync(Stream stream, string path, IWriteFileOptions options)
         {
-            if (!overrideIfExists && await FileExistsAsync(path))
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            if (!options.OverrideIfExists && await FileExistsAsync(path))
                 throw new FileAlreadyExistsException(path);
 
             CreateDirectoryIfNotExisting(path);
@@ -154,6 +170,30 @@ namespace PoweredSoft.Storage.Physical
         public string SanitizeFileName(string key, string replacement)
         {
             return key;
+        }
+
+        public Task<IFileInfo> WriteFileAsync(string sourcePath, string path, bool overrideIfExists = true)
+        {
+            return WriteFileAsync(sourcePath, path, new DefaultWriteOptions
+            {
+                OverrideIfExists = overrideIfExists
+            });
+        }
+
+        public Task<IFileInfo> WriteFileAsync(byte[] bytes, string path, bool overrideIfExists = true)
+        {
+            return WriteFileAsync(bytes, path, new DefaultWriteOptions
+            {
+                OverrideIfExists = overrideIfExists
+            });
+        }
+
+        public Task<IFileInfo> WriteFileAsync(Stream stream, string path, bool overrideIfExists = true)
+        {
+            return WriteFileAsync(stream, path, new DefaultWriteOptions
+            {
+                OverrideIfExists = overrideIfExists
+            });
         }
     }
 }

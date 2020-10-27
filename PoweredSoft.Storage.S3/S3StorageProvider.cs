@@ -177,22 +177,25 @@ namespace PoweredSoft.Storage.S3
             return files.Cast<IDirectoryOrFile>().ToList();
         }
 
-        public async Task<IFileInfo> WriteFileAsync(string sourcePath, string path, bool overrideIfExists = true)
+        public async Task<IFileInfo> WriteFileAsync(string sourcePath, string path, IWriteFileOptions options)
         {
-            using var client = GetClient();
-            await client.UploadObjectFromFilePathAsync(this.bucketName, path, sourcePath, null);
-            var file = await GetFileInfoByPath(path);
-            return file;
+            using var fileStream = new FileStream(sourcePath, FileMode.Open, FileAccess.Read);
+            return await WriteFileAsync(fileStream, path, options);
         }
 
-        public Task<IFileInfo> WriteFileAsync(byte[] bytes, string path, bool overrideIfExists = true)
+        public Task<IFileInfo> WriteFileAsync(byte[] bytes, string path, IWriteFileOptions options)
         {
-            return WriteFileAsync(new MemoryStream(bytes), path, overrideIfExists: overrideIfExists);
+            return WriteFileAsync(new MemoryStream(bytes), path, options);
         }
 
-        public async Task<IFileInfo> WriteFileAsync(Stream stream, string path, bool overrideIfExists = true)
+        public async Task<IFileInfo> WriteFileAsync(Stream stream, string path, IWriteFileOptions options)
         {
-            if (!overrideIfExists && await FileExistsAsync(path))
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            if (!options.OverrideIfExists && await FileExistsAsync(path))
                 throw new FileAlreadyExistsException(path);
 
             using var client = GetClient();
@@ -202,6 +205,12 @@ namespace PoweredSoft.Storage.S3
                 InputStream = stream,
                 Key = path
             };
+
+            if (options is IS3FileWriteOptions s3FileWriteOptions)
+            {
+                if (s3FileWriteOptions.Acl != null)
+                    request.CannedACL = new S3CannedACL(s3FileWriteOptions.Acl);
+            }
 
             var result = await client.PutObjectAsync(request);
             var file = await GetFileInfoByPath(path);
@@ -245,6 +254,30 @@ namespace PoweredSoft.Storage.S3
             Regex regex = new Regex(pattern, options);
             var hasMatches = regex.IsMatch(fileName);
             return false == hasMatches;
+        }
+
+        public Task<IFileInfo> WriteFileAsync(string sourcePath, string path, bool overrideIfExists = true)
+        {
+            return WriteFileAsync(sourcePath, path, new DefaultWriteOptions
+            {
+                OverrideIfExists = overrideIfExists
+            });
+        }
+
+        public Task<IFileInfo> WriteFileAsync(byte[] bytes, string path, bool overrideIfExists = true)
+        {
+            return WriteFileAsync(bytes, path, new DefaultWriteOptions
+            {
+                OverrideIfExists = overrideIfExists
+            });
+        }
+
+        public Task<IFileInfo> WriteFileAsync(Stream stream, string path, bool overrideIfExists = true)
+        {
+            return WriteFileAsync(stream, path, new DefaultWriteOptions
+            {
+                OverrideIfExists = overrideIfExists
+            });
         }
     }
 }

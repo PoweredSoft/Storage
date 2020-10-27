@@ -1,11 +1,23 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PoweredSoft.Storage.S3;
+using System.Text;
 
 namespace PoweredSoft.Storage.Test
 {
     [TestClass]
     public class S3Tests
     {
+        [TestMethod]
+        public async System.Threading.Tasks.Task S3AclWriteAsync()
+        {
+            var space = GetMockS3Space();
+            await space.WriteFileAsync(Encoding.UTF8.GetBytes("Hello World"), "hello-world.txt", new S3FileWriteOptions
+            {
+                Acl = "public-read",
+                OverrideIfExists = true
+            });
+        }
+
         [TestMethod]
         public void NameValidation()
         {
@@ -33,9 +45,11 @@ namespace PoweredSoft.Storage.Test
 
         private static S3StorageProvider GetMockS3Space()
         {
-            var space = new S3StorageProvider("http://localhost:9000", "mybucket", "myminio", "myexample");
-            space.SetForcePathStyle(true);
-            space.SetS3UsEast1RegionalEndpointValue(Amazon.Runtime.S3UsEast1RegionalEndpointValue.Legacy);
+            //var space = new S3StorageProvider("http://localhost:9000", "mybucket", "minioadmin", "minioadmin");
+            //space.SetForcePathStyle(true);
+            //space.SetS3UsEast1RegionalEndpointValue(Amazon.Runtime.S3UsEast1RegionalEndpointValue.Legacy);
+
+            var space = new S3StorageProvider(" https://nyc3.digitaloceanspaces.com", "lveb-public", "42ZNGWW3EHQECLS7FCPT", "NKhVtWvAdUKRhoFN9QK7rsqnLarVaxpxIAwHJTCPrIA");
             return space;
         }
     }
